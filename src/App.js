@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import logo from './logo.png';
 import './App.css';
 import MemberList from './components/MemberList';
 
@@ -55,7 +54,7 @@ class App extends Component {
     return (<div className="container-fluid">
       <div className="row-fluid">
         <div className="span12">
-          <div class="page-header">
+          <div className="page-header">
             <h3>Ubiquity6</h3>
             <p>React Coding Exercise</p>
           </div>
@@ -80,7 +79,7 @@ class App extends Component {
                 </div>
               </div>
               <div className="form-group col-md-2">
-                  <button onClick={this.getMembers.bind(this)} className="btn btn-primary">Get Members</button>
+                <button onClick={this.getMembers.bind(this)} className="btn btn-primary">Get Members</button>
               </div>
             </div>
           </form>
@@ -88,8 +87,8 @@ class App extends Component {
             <div className="form-group col-md-5">
               <label>Search by First Name:</label>
               <input type="text" id="search" className="form-control" onChange={this.onSearchChange.bind(this)}/>
+            </div>
           </div>
-      </div>
         </div>
         <div className="panel panel-default">
           <div className="panel-body">
