@@ -12,7 +12,10 @@ class App extends Component {
       session: 115,
       search: '',
       sort: '',
-      filter: ''
+      filter: '',
+      currentPage: 1,
+      membersOnPage: 10,
+      isLoading: false
     };
   }
 
@@ -24,21 +27,25 @@ class App extends Component {
     const chamber = this.state.chamber;
     let self = this;
 
+    this.setState({isLoading: true})
+
     fetch(`https://api.propublica.org/congress/v1/${session}/${chamber}/members.json`, {
       headers: new Headers({'X-API-Key': 'd0ywBucVrXRlMQhENZxRtL3O7NPgtou2mwnLARTr'})
     }).then((res) => res.json()).then((json) => json.results[0].members).then((members) => {
-      self.setState({members: members});
+      self.setState({members: members}, () => {
+          self.setState({isLoading: false});
+      });
     });
   }
 
   onSearchChange(e) {
-    // this.setState({search: e.target.value});
     let members = this.state.members;
     let search = e.target.value;
     let newMembers;
 
+    this.setState({search: e.target.value});
+
     if (search.length !== 0) {
-      this.setState({search: e.target.value});
       newMembers = members.filter(function(item) {
         return item.first_name.toLowerCase().indexOf(search.toLowerCase()) > -1 || item.last_name.toLowerCase().indexOf(search.toLowerCase()) > -1 || item.state.toLowerCase().indexOf(search.toLowerCase()) > -1;
       });
@@ -54,23 +61,8 @@ class App extends Component {
     this.setState({chamber: e.target.value});
   }
 
-  onFilterChange(e) {
-    // this.setState({sort: e.target.value});
-    // let members = this.state.members;
-    // if (e.target.value === "last_name") {
-    //     members.sort(function(a, b) {
-    //       return a.last_name - b.last_name;
-    //     });
-    // } else if (e.target.value === "state") {
-    //     members.sort(function(a, b) {
-    //       return a.state - b.state;
-    //     });
-    // } else {}
-    // this.setState({members: members});
-
-  }
-
   render() {
+
     return (<div className="container-fluid">
       <div className="row-fluid">
         <div className="span12">
@@ -110,24 +102,7 @@ class App extends Component {
             </div>
           </div>
         </div>
-        <form>
-          <div className="form-row">
-            <div className="form-group col-md-2">
-              <div className="radio">
-                <label>
-                  <input type="radio" className="form-control" name="democrat" value="democrat" checked={this.state.chamber === 'democrat'} onChange={this.onFilterChange.bind(this)}/>
-                  Democrat
-                </label>
-              </div>
-              <div className="radio">
-                <label>
-                  <input type="radio" className="form-control" name="republican" value="republican" checked={this.state.chamber === 'republican'} onChange={this.onFilterChange.bind(this)}/>
-                  Republican
-                </label>
-              </div>
-            </div>
-          </div>
-        </form>
+        <div className="row">{this.state.isLoading ? "Loading results..." : ""}</div>
         <div className="panel panel-default">
           <div className="panel-body">
             <MemberList members={this.state.members} filter={this.state.filter} search={this.state.search}/>
