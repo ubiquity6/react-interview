@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import logo from './logo.png';
 import './App.css';
-import PersonList from './components/PersonList';
+import MemberList from './components/MemberList';
 
 class App extends Component {
   constructor(props) {
@@ -20,8 +20,8 @@ class App extends Component {
   getMembers() {
     const session = this.state.session;
     const chamber = this.state.chamber;
-
     let self = this;
+
     fetch(`https://api.propublica.org/congress/v1/${session}/${chamber}/members.json`, {
       headers: new Headers({'X-API-Key': 'd0ywBucVrXRlMQhENZxRtL3O7NPgtou2mwnLARTr'})
     }).then((res) => res.json()).then((json) => json.results[0].members).then((members) => {
@@ -30,21 +30,17 @@ class App extends Component {
   }
 
   onSearchChange(e) {
-    this.setState({search: e.target.value});
-  }
-
-  onSearchSubmit(e) {
-    e.preventDefault();
+    // this.setState({search: e.target.value});
     let members = this.state.members;
-    let search = this.state.search;
+    let search = e.target.value;
+    let newMembers;
 
-    let newList = members.filter(function(item) {
-      return item.first_name.toLowerCase().indexOf(search.toLowerCase()) > -1;
-    });
-
-    // Issue here with asynch
-
-    this.setState({members: newList});
+    if (search.length !== 0) {
+      newMembers = members.filter(function(item) {
+        return item.first_name.toLowerCase().indexOf(search.toLowerCase()) > -1;
+      });
+      this.setState({members: newMembers});
+    }
   }
 
   onSessionChange(e) {
@@ -56,45 +52,51 @@ class App extends Component {
   }
 
   render() {
-    return (<div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo"/>
-        <h1 className="App-title">React Programming Exercise</h1>
-      </header>
-      <section className="container">
-        <div className="col-md-12">
-          <div className="panel panel-default">
-            <div className="panel-body">
-              <label>Session</label>
-              <input onChange={(e) => this.onSessionChange(e)}/>
-            </div>
-            <form>
-              <div className="radio">
-                <label>
-                  <input type="radio" name="house" value="house" checked={this.state.chamber === 'house'} onChange={this.onTypeChange.bind(this)}/>
-                  House
-                </label>
-              </div>
-              <div className="radio">
-                <label>
-                  <input type="radio" name="senate" value="senate" checked={this.state.chamber === 'senate'} onChange={this.onTypeChange.bind(this)}/>
-                  Senate
-                </label>
-              </div>
-            </form>
-            <button onClick={this.getMembers.bind(this)} className="btn btn-primary">Get Members</button>
-            <form onSubmit={this.onSearchSubmit.bind(this)}>
-              <input id="search" onChange={this.onSearchChange.bind(this)}/>
-              <button type="submit" className="btn btn-default">Search By First Name</button>
-            </form>
+    return (<div className="container-fluid">
+      <div className="row-fluid">
+        <div className="span12">
+          <div class="page-header">
+            <h3>Ubiquity6</h3>
+            <p>React Coding Exercise</p>
           </div>
-          <div className="panel panel-default">
-            <div className="panel-body">
-              <PersonList members={this.state.members}/>
+          <form>
+            <div className="form-row">
+              <div className="form-group col-md-2">
+                <label>Session</label>
+                <input className="form-control" onChange={(e) => this.onSessionChange(e)}/>
+              </div>
+              <div className="form-group col-md-2">
+                <div className="radio">
+                  <label>
+                    <input type="radio" className="form-control" name="house" value="house" checked={this.state.chamber === 'house'} onChange={this.onTypeChange.bind(this)}/>
+                    House
+                  </label>
+                </div>
+                <div className="radio">
+                  <label>
+                    <input type="radio" className="form-control" name="senate" value="senate" checked={this.state.chamber === 'senate'} onChange={this.onTypeChange.bind(this)}/>
+                    Senate
+                  </label>
+                </div>
+              </div>
+              <div className="form-group col-md-2">
+                  <button onClick={this.getMembers.bind(this)} className="btn btn-primary">Get Members</button>
+              </div>
             </div>
+          </form>
+          <div className="form-row">
+            <div className="form-group col-md-5">
+              <label>Search by First Name:</label>
+              <input type="text" id="search" className="form-control" onChange={this.onSearchChange.bind(this)}/>
+          </div>
+      </div>
+        </div>
+        <div className="panel panel-default">
+          <div className="panel-body">
+            <MemberList members={this.state.members}/>
           </div>
         </div>
-      </section>
+      </div>
     </div>);
   }
 }

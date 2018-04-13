@@ -1,7 +1,7 @@
 import React from "react";
-import Person from './Person';
+import Member from './Member';
 
-export default class PersonList extends React.Component {
+export default class MemberList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -11,7 +11,7 @@ export default class PersonList extends React.Component {
     return (<div className="row">
         <div className="col-md-12">
           <ul className="list-group">
-            {this.props.members.map((member) => <Person key={member.id} member={member}/>)}
+            {this.props.members.map((member) => <Member key={member.id} member={member}/>)}
           </ul>
         </div>
     </div>)
