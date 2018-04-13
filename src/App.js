@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 import MemberList from './components/MemberList';
+import Search from './components/Search';
 
 class App extends Component {
   constructor(props) {
@@ -58,22 +59,17 @@ class App extends Component {
   }
 
   /**
-   * capture new search terms
-   * display and filter results accordingly
+   * display and filter results from search
    */
-  onSearchChange(e) {
-    let members = this.state.members;
-    let search = e.target.value;
-    let newMembers;
+  setSearch(term) {
+      let newMembers;
 
-    this.setState({search: e.target.value});
-
-    if (search.length !== 0) {
-      newMembers = members.filter(function(item) {
-        return item.first_name.toLowerCase().indexOf(search.toLowerCase()) > -1 || item.last_name.toLowerCase().indexOf(search.toLowerCase()) > -1 || item.state.toLowerCase().indexOf(search.toLowerCase()) > -1;
-      });
-      this.setState({members: newMembers});
-    }
+      if (term.length !== 0) {
+        newMembers = this.state.members.filter(function(item) {
+          return item.first_name.toLowerCase().indexOf(term.toLowerCase()) > -1 || item.last_name.toLowerCase().indexOf(term.toLowerCase()) > -1 || item.state.toLowerCase().indexOf(term.toLowerCase()) > -1;
+        });
+        this.setState({members: newMembers});
+      }
   }
 
   /**
@@ -124,12 +120,7 @@ class App extends Component {
               </div>
             </div>
           </form>
-          <div className="form-row">
-            <div className="form-group col-md-5">
-              <label>Search:</label>
-              <input type="text" id="search" className="form-control" onChange={this.onSearchChange.bind(this)}/>
-            </div>
-          </div>
+          <Search setSearch={this.setSearch.bind(this)}/>
         </div>
         <div className="row">
           <div className="col-md-8 col-md-offset-2">
