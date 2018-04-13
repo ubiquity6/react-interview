@@ -11,14 +11,16 @@ class App extends Component {
       members: [],
       chamber: 'house',
       session: 115,
-      search: '',
-      sort: '',
-      filter: '',
       isLoading: false,
       cache: {}
     };
   }
 
+  /**
+   * check if request has already been made via cache
+   * if so, display stored response
+   * else, initiate call and store in cache
+   */
   getMembers(e) {
     e.preventDefault();
 
@@ -26,16 +28,10 @@ class App extends Component {
     let newResponse = {};
     const session = this.state.session;
     const chamber = this.state.chamber;
-
-    let URI = `https://api.propublica.org/congress/v1/${session}/${chamber}/members.json`; // set API URI
+    let URI = `https://api.propublica.org/congress/v1/${session}/${chamber}/members.json`;
 
     this.setState({isLoading: true}) // start displaying loading UI
 
-    /**
-     * check if request has already been made via cache
-     * if so, display stored response
-     * else, initiate call and store in cache
-     */
     if (this.state.cache[URI]) {
       this.setState({
         members: this.state.cache[URI]
@@ -59,31 +55,17 @@ class App extends Component {
   }
 
   /**
-   * display and filter results from search
+   * display and filter results from using search term
    */
   setSearch(term) {
-      let newMembers;
+    let newMembers;
 
-      if (term.length !== 0) {
-        newMembers = this.state.members.filter(function(item) {
-          return item.first_name.toLowerCase().indexOf(term.toLowerCase()) > -1 || item.last_name.toLowerCase().indexOf(term.toLowerCase()) > -1 || item.state.toLowerCase().indexOf(term.toLowerCase()) > -1;
-        });
-        this.setState({members: newMembers});
-      }
-  }
-
-  /**
-   * capture session changes
-   */
-  onSessionChange(e) {
-    this.setState({session: e.target.value});
-  }
-
-  /**
-   * capture type changes
-   */
-  onTypeChange(e) {
-    this.setState({chamber: e.target.value});
+    if (term.length !== 0) {
+      newMembers = this.state.members.filter(function(item) {
+        return item.first_name.toLowerCase().indexOf(term.toLowerCase()) > -1 || item.last_name.toLowerCase().indexOf(term.toLowerCase()) > -1 || item.state.toLowerCase().indexOf(term.toLowerCase()) > -1;
+      });
+      this.setState({members: newMembers});
+    }
   }
 
   render() {
@@ -99,18 +81,18 @@ class App extends Component {
             <div className="form-row">
               <div className="form-group col-md-2">
                 <label>Session</label>
-                <input className="form-control" onChange={(e) => this.onSessionChange(e)}/>
+                <input className="form-control"/>
               </div>
               <div className="form-group col-md-2">
                 <div className="radio">
                   <label>
-                    <input type="radio" className="form-control" name="house" value="house" checked={this.state.chamber === 'house'} onChange={this.onTypeChange.bind(this)}/>
+                    <input type="radio" className="form-control" name="house" value="house" checked={this.state.chamber === 'house'} onChange={(e) => this.setState({chamber: e.target.value})}/>
                     House
                   </label>
                 </div>
                 <div className="radio">
                   <label>
-                    <input type="radio" className="form-control" name="senate" value="senate" checked={this.state.chamber === 'senate'} onChange={this.onTypeChange.bind(this)}/>
+                    <input type="radio" className="form-control" name="senate" value="senate" checked={this.state.chamber === 'senate'} onChange={(e) => this.setState({chamber: e.target.value})}/>
                     Senate
                   </label>
                 </div>
@@ -124,16 +106,12 @@ class App extends Component {
         </div>
         <div className="row">
           <div className="col-md-8 col-md-offset-2">
-            {
-              this.state.isLoading
-                ? "Hold tight... results are on their way!"
-                : ""
-            }
+            {this.state.isLoading ? "Hold tight... results are on their way!" : ""}
           </div>
         </div>
         <div className="panel panel-default">
           <div className="panel-body">
-            <MemberList members={this.state.members} filter={this.state.filter} search={this.state.search}/>
+            <MemberList members={this.state.members}/>
           </div>
         </div>
       </div>
