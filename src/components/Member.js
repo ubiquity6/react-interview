@@ -1,23 +1,26 @@
 import React from "react";
 
+const Member = ({member}) => {
 
-export default class Member extends React.Component {
-  constructor(props) {
-    super(props);
+  return (<li id={member.id} className="list-group-item">
+    <h3 className="title">
+      {member.short_title} {member.first_name} {member.last_name}
+    </h3>
+    <h4>{member.state}</h4>
+    <h5>{member.election_year}</h5>
+    <h5>{
+        member.party === "D"
+          ? "Democrat"
+          : "Republican"
+      }</h5>
+    <p>{
+        member.gender === "M"
+          ? "Male"
+          : "Female"
+      }</p>
+    <a href={'http://twitter.com/' + member.twitter_account}>@{member.twitter_account}</a>
+  </li>);
 
-    this.state = {};
-  }
-
-  render() {
-    return (<li id={this.props.member.id} className="list-group-item">
-        <h3 className="title">
-          {this.props.member.short_title} {this.props.member.first_name} {this.props.member.last_name}
-        </h3>
-        <h4>{this.props.member.state}</h4>
-        <h5>{this.props.member.election_year}</h5>
-        <h5>{this.props.member.party === "D" ? "Democrat" : "Republican"}</h5>
-        <p>{this.props.member.gender === "M" ? "Male" : "Female"}</p>
-        <a href={'http://twitter.com/' + this.props.member.twitter_account}>@{this.props.member.twitter_account}</a>
-      </li>);
-  }
 }
+
+export default Member;

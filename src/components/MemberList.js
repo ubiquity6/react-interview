@@ -1,19 +1,15 @@
 import React from "react";
 import Member from './Member';
 
-export default class MemberList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {}
-  }
+const MemberList = ({members}) => {
 
-  render() {
     return (<div className="row">
         <div className="col-md-12">
           <ul className="list-group">
-            {this.props.members.map((member) => <Member key={member.id + member.total_votes} member={member}/>)}
+            {members.map((member) => <Member key={member.id + member.total_votes} member={member}/>)}
           </ul>
         </div>
-    </div>)
-  }
+    </div>);
 }
+
+export default MemberList;
