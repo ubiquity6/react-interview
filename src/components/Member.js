@@ -14,7 +14,7 @@ export default class Member extends React.Component {
         </h3>
         <h4>{this.props.member.state}</h4>
         <h5>{this.props.member.election_year}</h5>
-        <a href={'twitter.com/' + this.props.member.twitter_account}>@{this.props.member.twitter_account}</a>
+        <a href={'http://twitter.com/' + this.props.member.twitter_account}>@{this.props.member.twitter_account}</a>
       </li>);
   }
 }
