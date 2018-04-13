@@ -13,31 +13,54 @@ class App extends Component {
       search: '',
       sort: '',
       filter: '',
-      currentPage: 1,
-      membersOnPage: 10,
-      isLoading: false
+      isLoading: false,
+      cache: {}
     };
   }
 
-  componentWillMount() {}
-
   getMembers(e) {
     e.preventDefault();
+
+    let self = this;
+    let newResponse = {};
     const session = this.state.session;
     const chamber = this.state.chamber;
-    let self = this;
 
-    this.setState({isLoading: true})
+    let URI = `https://api.propublica.org/congress/v1/${session}/${chamber}/members.json`; // set API URI
 
-    fetch(`https://api.propublica.org/congress/v1/${session}/${chamber}/members.json`, {
-      headers: new Headers({'X-API-Key': 'd0ywBucVrXRlMQhENZxRtL3O7NPgtou2mwnLARTr'})
-    }).then((res) => res.json()).then((json) => json.results[0].members).then((members) => {
-      self.setState({members: members}, () => {
-          self.setState({isLoading: false});
+    this.setState({isLoading: true}) // start displaying loading UI
+
+    /**
+     * check if request has already been made via cache
+     * if so, display stored response
+     * else, initiate call and store in cache
+     */
+    if (this.state.cache[URI]) {
+      this.setState({
+        members: this.state.cache[URI]
+      }, () => {
+        self.setState({isLoading: false});
       });
-    });
+    } else {
+      fetch(URI, {
+        headers: new Headers({'X-API-Key': 'd0ywBucVrXRlMQhENZxRtL3O7NPgtou2mwnLARTr'})
+      }).then((res) => res.json()).then((json) => json.results[0].members).then((members) => {
+        newResponse[URI] = members;
+        self.setState({
+          members: members,
+          cache: newResponse
+        }, () => {
+          self.setState({isLoading: false});
+        });
+      });
+    }
+
   }
 
+  /**
+   * capture new search terms
+   * display and filter results accordingly
+   */
   onSearchChange(e) {
     let members = this.state.members;
     let search = e.target.value;
@@ -53,10 +76,16 @@ class App extends Component {
     }
   }
 
+  /**
+   * capture session changes
+   */
   onSessionChange(e) {
     this.setState({session: e.target.value});
   }
 
+  /**
+   * capture type changes
+   */
   onTypeChange(e) {
     this.setState({chamber: e.target.value});
   }
@@ -102,7 +131,15 @@ class App extends Component {
             </div>
           </div>
         </div>
-        <div className="row">{this.state.isLoading ? "Loading results..." : ""}</div>
+        <div className="row">
+          <div className="col-md-8 col-md-offset-2">
+            {
+              this.state.isLoading
+                ? "Hold tight... results are on their way!"
+                : ""
+            }
+          </div>
+        </div>
         <div className="panel panel-default">
           <div className="panel-body">
             <MemberList members={this.state.members} filter={this.state.filter} search={this.state.search}/>
