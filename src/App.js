@@ -12,7 +12,10 @@ class App extends Component {
       chamber: 'house',
       session: 115,
       isLoading: false,
-      cache: {}
+      cache: {},
+      numberPerPage: 10,
+      numberOfPages: 1,
+      currentPage: 1
     };
   }
 
@@ -45,7 +48,8 @@ class App extends Component {
         newResponse[URI] = members;
         self.setState({
           members: members,
-          cache: newResponse
+          cache: newResponse,
+          numberOfPages: Math.ceil(members.length / self.state.numberPerPage)
         }, () => {
           self.setState({isLoading: false});
         });
@@ -67,6 +71,40 @@ class App extends Component {
       this.setState({members: newMembers});
     }
   }
+
+  nextPage() {
+      let current = this.state.currentPage;
+      this.setState({currentPage: current + 1});
+      this.loadList();
+  }
+
+  previousPage() {
+      let current = this.state.currentPage;
+      this.setState({currentPage: current - 1});
+      this.loadList();
+  }
+
+  firstPage() {
+      this.setState({currentPage: 1});
+      this.loadList();
+  }
+
+  lastPage() {
+      this.setState({currentPage: this.state.numberOfPages});
+      this.loadList();
+  }
+
+  loadList() {
+    let begin = ((this.state.currentPage - 1) * this.state.numberPerPage);
+    let end = begin + this.state.numberPerPage;
+
+    let members = this.state.members;
+    let pageList = members.slice(begin, end);
+    console.log(pageList);
+    // drawList();    // draws out our data
+    // check();         // determines the states of the pagination buttons
+}
+
 
   render() {
 
@@ -113,6 +151,12 @@ class App extends Component {
           <div className="panel-body">
             <MemberList members={this.state.members}/>
           </div>
+        </div>
+        <div>
+            <input type="button" id="first" onClick={this.firstPage.bind(this)} value="first" />
+            <input type="button" id="next" onClick={this.nextPage.bind(this)} value="next" />
+            <input type="button" id="previous" onClick={this.previousPage.bind(this)} value="previous" />
+            <input type="button" id="last" onClick={this.lastPage.bind(this)} value="last" />
         </div>
       </div>
     </div>);
