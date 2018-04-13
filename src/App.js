@@ -10,7 +10,9 @@ class App extends Component {
       members: [],
       chamber: 'house',
       session: 115,
-      search: ''
+      search: '',
+      sort: '',
+      filter: ''
     };
   }
 
@@ -36,10 +38,9 @@ class App extends Component {
     let newMembers;
 
     if (search.length !== 0) {
+      this.setState({search: e.target.value});
       newMembers = members.filter(function(item) {
-        return item.first_name.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
-        item.last_name.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
-        item.state.toLowerCase().indexOf(search.toLowerCase()) > -1;
+        return item.first_name.toLowerCase().indexOf(search.toLowerCase()) > -1 || item.last_name.toLowerCase().indexOf(search.toLowerCase()) > -1 || item.state.toLowerCase().indexOf(search.toLowerCase()) > -1;
       });
       this.setState({members: newMembers});
     }
@@ -51,6 +52,22 @@ class App extends Component {
 
   onTypeChange(e) {
     this.setState({chamber: e.target.value});
+  }
+
+  onFilterChange(e) {
+    // this.setState({sort: e.target.value});
+    // let members = this.state.members;
+    // if (e.target.value === "last_name") {
+    //     members.sort(function(a, b) {
+    //       return a.last_name - b.last_name;
+    //     });
+    // } else if (e.target.value === "state") {
+    //     members.sort(function(a, b) {
+    //       return a.state - b.state;
+    //     });
+    // } else {}
+    // this.setState({members: members});
+
   }
 
   render() {
@@ -93,9 +110,27 @@ class App extends Component {
             </div>
           </div>
         </div>
+        <form>
+          <div className="form-row">
+            <div className="form-group col-md-2">
+              <div className="radio">
+                <label>
+                  <input type="radio" className="form-control" name="democrat" value="democrat" checked={this.state.chamber === 'democrat'} onChange={this.onFilterChange.bind(this)}/>
+                  Democrat
+                </label>
+              </div>
+              <div className="radio">
+                <label>
+                  <input type="radio" className="form-control" name="republican" value="republican" checked={this.state.chamber === 'republican'} onChange={this.onFilterChange.bind(this)}/>
+                  Republican
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
         <div className="panel panel-default">
           <div className="panel-body">
-            <MemberList members={this.state.members}/>
+            <MemberList members={this.state.members} filter={this.state.filter} search={this.state.search}/>
           </div>
         </div>
       </div>
