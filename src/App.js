@@ -16,7 +16,8 @@ class App extends Component {
 
   componentWillMount() {}
 
-  getMembers() {
+  getMembers(e) {
+    e.preventDefault();
     const session = this.state.session;
     const chamber = this.state.chamber;
     let self = this;
@@ -36,7 +37,9 @@ class App extends Component {
 
     if (search.length !== 0) {
       newMembers = members.filter(function(item) {
-        return item.first_name.toLowerCase().indexOf(search.toLowerCase()) > -1;
+        return item.first_name.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
+        item.last_name.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
+        item.state.toLowerCase().indexOf(search.toLowerCase()) > -1;
       });
       this.setState({members: newMembers});
     }
@@ -79,13 +82,13 @@ class App extends Component {
                 </div>
               </div>
               <div className="form-group col-md-2">
-                <button onClick={this.getMembers.bind(this)} className="btn btn-primary">Get Members</button>
+                <button onClick={(e) => this.getMembers(e)} className="btn btn-primary">Get Members</button>
               </div>
             </div>
           </form>
           <div className="form-row">
             <div className="form-group col-md-5">
-              <label>Search by First Name:</label>
+              <label>Search:</label>
               <input type="text" id="search" className="form-control" onChange={this.onSearchChange.bind(this)}/>
             </div>
           </div>
